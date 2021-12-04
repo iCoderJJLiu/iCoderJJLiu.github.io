@@ -17,7 +17,7 @@
 <meta property="og:image" content="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_screen_display.png">
 <meta property="og:image" content="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_frame_drop.png">
 <meta property="article:published_time" content="2021-11-26T13:31:41.657Z">
-<meta property="article:modified_time" content="2021-12-04T05:28:34.753Z">
+<meta property="article:modified_time" content="2021-12-04T05:29:26.177Z">
 <meta property="article:author" content="JJ.Liu">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_screen_scan.png">
@@ -142,7 +142,8 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="屏幕显示图像的原理"><a href="#屏幕显示图像的原理" class="headerlink" title="屏幕显示图像的原理"></a>屏幕显示图像的原理</h2><p><img src="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_screen_scan.png"><br>首先从过去的CRT显示器原理说起，CRT的电子枪按照上面方式，从上到下一行行扫描，扫描完成后显示器就会呈现一帧画面，随后电子枪回到初始位置继续下一次扫描。为了把显示器的显示过程和系统的视频控制器进行同步，显示器（或者其他硬件）会用硬件时钟产生一系列的定时信号。当电子枪换到新的一行，准备进行扫描时，显示器会发出一个水平同步信号（horizonal synchronization），简称HSync；当一帧画面绘制完成后，电子枪恢复到原位，准备画下一帧前，显示器会发出一个垂直同步信号（vertical synchronization），简称VSync。显示器通常以固定频率进行刷新，这个刷新率就是VSync信号产生的频率。<br><img src="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_screen_display.png"></p>
+    <h2 id="屏幕显示图像的原理"><a href="#屏幕显示图像的原理" class="headerlink" title="屏幕显示图像的原理"></a>屏幕显示图像的原理</h2><p><img src="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_screen_scan.png"><br>首先从过去的CRT显示器原理说起，CRT的电子枪按照上面方式，从上到下一行行扫描，扫描完成后显示器就会呈现一帧画面，随后电子枪回到初始位置继续下一次扫描。为了把显示器的显示过程和系统的视频控制器进行同步，显示器（或者其他硬件）会用硬件时钟产生一系列的定时信号。当电子枪换到新的一行，准备进行扫描时，显示器会发出一个水平同步信号（horizonal synchronization），简称HSync；当一帧画面绘制完成后，电子枪恢复到原位，准备画下一帧前，显示器会发出一个垂直同步信号（vertical synchronization)，简称VSync。显示器通常以固定频率进行刷新，这个刷新率就是VSync信号产生的频率。</p>
+<p><img src="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_screen_display.png"></p>
 <p>计算机系统中CPU，GPU，显示器是以上面这种方式协同工作的。</p>
 <ul>
 <li>CPU计算好显示内容提交到GPU</li>
