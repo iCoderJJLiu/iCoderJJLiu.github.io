@@ -15,9 +15,10 @@
 <meta property="og:locale">
 <meta property="og:image" content="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_screen_scan.png">
 <meta property="og:image" content="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_screen_display.png">
+<meta property="og:image" content="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_vsync_off.jpg">
 <meta property="og:image" content="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_frame_drop.png">
 <meta property="article:published_time" content="2021-11-26T13:31:41.657Z">
-<meta property="article:modified_time" content="2021-12-04T05:29:26.177Z">
+<meta property="article:modified_time" content="2021-12-08T14:00:54.605Z">
 <meta property="article:author" content="JJ.Liu">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_screen_scan.png">
@@ -150,11 +151,21 @@
 <li>GPU渲染完成后将渲染结果放入帧缓冲区</li>
 <li>随后视频控制器会按照VSync信号逐行读取帧缓冲区的数据，经过可能的数模转换传递给显示器显示。</li>
 </ul>
-<h2 id="卡顿产生的原因和解决方案"><a href="#卡顿产生的原因和解决方案" class="headerlink" title="卡顿产生的原因和解决方案"></a>卡顿产生的原因和解决方案</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p><img src="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_frame_drop.png"></p>
-<h3 id="CPU-资源消耗原因和解决方案"><a href="#CPU-资源消耗原因和解决方案" class="headerlink" title="CPU 资源消耗原因和解决方案"></a>CPU 资源消耗原因和解决方案</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<h3 id="GPU-资源消耗原因和解决方案"><a href="#GPU-资源消耗原因和解决方案" class="headerlink" title="GPU 资源消耗原因和解决方案"></a>GPU 资源消耗原因和解决方案</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>在最简单情况下，帧缓冲区只有一个，这时帧缓冲区的读取和刷新都会有比较大的效率问题。因此采用双缓冲机制（两个缓冲区）会优化该问题。在这种情况下，GPU会预先渲染好一帧放入一个缓冲区内，让视频控制器读取，当下一帧渲染好之后，GPU会直接把视频控制器的指针指向第二个缓冲器，从而提升效率。</p>
+<p>双缓冲的弊端：</p>
+<blockquote>
+<p>当视频控制器还未读取完成时，即屏幕内容刚显示到一半时，GPU将新的一帧内容提交到帧缓冲区并把两个缓冲区进行交换，这个时候视频控制器就回吧新的一帧数据的下半段显示到屏幕上，就会照成画面撕裂：</p>
+<p><img src="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_vsync_off.jpg"></p>
+</blockquote>
+<p>为了解决这个问题，GPU通常有一个机制叫做垂直同步（V-Sync），当开启垂直同步后，GPU会等待显示器的VSync信号发出后，才进行新的一帧渲染和缓冲区更新。这样能解决画面撕裂现象，增加画面流畅度，但是需消耗更多计算资源，也会带来部分延迟。</p>
+<h2 id="卡顿产生的原因和解决方案"><a href="#卡顿产生的原因和解决方案" class="headerlink" title="卡顿产生的原因和解决方案"></a>卡顿产生的原因和解决方案</h2><p><img src="https://blog.ibireme.com/wp-content/uploads/2015/11/ios_frame_drop.png"></p>
+<p>在VSync信号到来之后，系统图形服务会通过<a target="_blank" rel="noopener" href="https://developer.apple.com/documentation/quartzcore/cadisplaylink">CADisplayLink</a>等机制通知app，app主线程开始在CPU中计算显示内容，比如视图的创建、布局计算、图形解码、文本绘制等。随后CPU会将计算好的内容提交到GPU中，由GPU进行变换、合成、渲染。随后GPU会把渲染结果提交到帧缓冲区，等下一次VSync信号到来时，显示在屏幕上。</p>
+<blockquote>
+<p><strong>界面卡顿</strong></p>
+<p>由于垂直同步的机制，如果在一个VSync时间内，CPU或者GPU没有完成内容提交，则那一帧就会被丢弃，等待下一次机会再展示，而这时显示屏会保留之前的内容不变，因此造成界面卡顿。</p>
+<p>Tips: CPU和GPU无论谁阻碍了显示流程，都会照成卡顿现象，因此要对CPU和GPU同时做评估和优化</p>
+</blockquote>
+<h3 id="CPU-资源消耗原因和解决方案"><a href="#CPU-资源消耗原因和解决方案" class="headerlink" title="CPU 资源消耗原因和解决方案"></a>CPU 资源消耗原因和解决方案</h3><h3 id="GPU-资源消耗原因和解决方案"><a href="#GPU-资源消耗原因和解决方案" class="headerlink" title="GPU 资源消耗原因和解决方案"></a>GPU 资源消耗原因和解决方案</h3>
   </div>
 </article>
 
