@@ -13,12 +13,12 @@
 <meta property="og:site_name" content="JJ.Liu&#39;s Home">
 <meta property="og:description" content="背景近期在开发iOS壳工程时，在didfinishlaunchingwithoptions方法调用完成后，根据SDK回调方法设置rootviewcontroller，在debug模式下，设置app的摇一摇菜单功能。  直白的将- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event方法添加到appdelegate中，">
 <meta property="og:locale">
-<meta property="og:image" content="http://example.com/Users/jj/Downloads/IMG_9452.JPG">
+<meta property="og:image" content="http://p0.meituan.net/scarlett/29e44ca1021be874f801ec663813b1a6278021.jpg">
 <meta property="article:published_time" content="2022-04-19T14:48:56.745Z">
-<meta property="article:modified_time" content="2022-04-19T14:48:59.627Z">
+<meta property="article:modified_time" content="2022-04-19T14:59:24.003Z">
 <meta property="article:author" content="JJ.Liu">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/Users/jj/Downloads/IMG_9452.JPG">
+<meta name="twitter:image" content="http://p0.meituan.net/scarlett/29e44ca1021be874f801ec663813b1a6278021.jpg">
     
     
       
@@ -141,7 +141,7 @@
 
   <div class="content" itemprop="articleBody">
     <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>近期在开发iOS壳工程时，在<code>didfinishlaunchingwithoptions</code>方法调用完成后，根据SDK回调方法设置rootviewcontroller，在debug模式下，设置app的摇一摇菜单功能。</p>
-<p><img src="/Users/jj/Downloads/IMG_9452.JPG" alt="IMG_9452"></p>
+<p><img src="http://p0.meituan.net/scarlett/29e44ca1021be874f801ec663813b1a6278021.jpg" alt="IMG_9452"></p>
 <p>直白的将<code>- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event</code>方法添加到<code>appdelegate</code>中，发现摇一摇该方法不掉用。</p>
 <h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>在<code>iOS 10.0</code>后，如果要在<code>appdelegate</code>中调用<code>motionBegan</code>方法。需做如下操作：</p>
 <ul>
